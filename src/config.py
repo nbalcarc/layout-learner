@@ -69,3 +69,57 @@ pinky_less = np.array([
 ])
 
 
+
+"""
+##### BUILT-IN LAYOUTS #####
+
+
+Used to compare our learned layouts vs real existing layouts.
+"""
+
+
+qwerty = np.array([
+    "qwertyuiop",
+    "asdfghjkl;",
+    "zxcvbnm,./",
+])
+
+
+# a little approximated, the symbols don't work the same as qwerty
+dvorak = np.array([
+    "/,.pyfgcrl",
+    "aoeuidhtns",
+    ";qjkxbmwvz",
+])
+
+
+colemak = np.array([
+    "qwfpgjluy;",
+    "arstdhneio",
+    "zxcvbkh,./",
+])
+
+
+colemak_dh = np.array([
+    "qwfpbjluy;",
+    "arstgmneio",
+    "zxcdvkh,./",
+])
+
+
+# approximation due to symbols
+semimak_jq = np.array([
+    "flhvz;wuoy",
+    "srntkcdeai",
+    "xjbmqpg,./",
+])
+
+
+# approximation due to symbols
+mtgap = np.array([
+    "ypoujkdlcw",
+    "inea;mhtsr",
+    "qz/.,bfgvx",
+])
+
+
