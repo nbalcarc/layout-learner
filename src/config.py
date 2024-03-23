@@ -107,6 +107,20 @@ colemak_dh = np.array([
 ])
 
 
+workman = np.array([
+    "qdrwbjfup;",
+    "ashtgyneoi",
+    "zxmcvkl,./",
+])
+
+
+norman = np.array([
+    "qwdfkjurl;",
+    "asetgynioh",
+    "zxcvbpm,./",
+])
+
+
 # approximation due to symbols
 semimak_jq = np.array([
     "flhvz;wuoy",
@@ -121,5 +135,25 @@ mtgap = np.array([
     "inea;mhtsr",
     "qz/.,bfgvx",
 ])
+
+
+alphabetical = np.array([
+    "abcdefghij",
+    "klmnopqrs;",
+    "tuvwxyz,./",
+])
+
+
+all_layouts = {
+    "qwerty": qwerty,
+    "dvorak": dvorak,
+    "colemak": colemak,
+    "colemak-dh": colemak_dh,
+    "workman": workman,
+    "norman": norman,
+    "semimak-jq": semimak_jq,
+    "mtgap": mtgap,
+    "alphabetical": alphabetical,
+}
 
 
