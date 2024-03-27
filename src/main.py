@@ -1,20 +1,27 @@
 import numpy as np
+import numpy.typing as npt
+from functools import reduce
+
+import config
 
 
-# for a non-staggered keyboard
-effort_grid_matrix = np.array([
-    [3.0, 2.4, 2.0, 2.2, 3.2,   3.2, 2.2, 2.0, 2.4, 3.0],
-    [1.6, 1.3, 1.1, 1.0, 2.9,   2.9, 1.0, 1.1, 1.3, 1.6],
-    [3.2, 2.6, 2.3, 1.6, 3.0,   3.0, 1.6, 2.3, 2.6, 3.2],
-])
+class Finger:
+    """Handles finger location and timing."""
+    def __init__(self):
+        self.location: int = 0
+        self.last_used: int = 0
 
 
-# for a normal staggered keyboard
-effort_grid_standard = np.array([
-    [3.0, 2.5, 2.1, 2.3, 2.6,   3.4, 2.2, 2.0, 2.4, 3.0],
-    [1.6, 1.3, 1.1, 1.0, 2.9,   2.9, 1.0, 1.1, 1.3, 1.6],
-    [3.5, 3.0, 2.7, 2.2, 3.7,   2.2, 1.8, 2.4, 2.7, 3.3],
-])
+class Hands:
+    """Contains a set of fingers and their assigned keys on a keyboard."""
+    def __init__(self, hand_placements: npt.NDArray):
+        flattened = reduce(lambda a, x: a + list(x), hand_placements, [])
+        uniques = set(list(flattened)) #which fingers there are
+        fingers = dict(map(lambda x: (x, Finger()), uniques))
+
+        self.fingermap = dict()
+        for i, h in enumerate(flattened):
+            self.fingermap[i] = fingers[h]
 
 
 def thing(layout: np.chararray):
@@ -25,6 +32,9 @@ def main():
     """Main entry point."""
 
     layout = np.chararray((3, 10))
+
+    Hands(config.home_row)
+
 
     
 
