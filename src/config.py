@@ -1,6 +1,37 @@
 import numpy as np
 
 
+def setup():
+    global layout, coordinate_grid, effort_grid, hand_placement
+    class layout():
+        qwerty = qwerty
+        dvorak = dvorak
+        colemak = colemak
+        colemak_dh = colemak_dh
+        workman = workman
+        norman = norman
+        semimak_jq = semimak_jq
+        mtgap = mtgap
+        alphabetical = alphabetical
+
+
+    class coordinate_grid():
+        standard = effort_grid_standard
+        matrix = effort_grid_matrix
+
+
+    class effort_grid():
+        standard = effort_grid_standard
+        matrix = effort_grid_matrix
+
+
+    class hand_placement():
+        home_row = home_row
+        hunt_and_peck = hunt_and_peck
+        gamer = gamer
+        pinkyless = pinkyless
+
+
 
 """
 ##### EFFORT GRID #####
@@ -168,33 +199,6 @@ alphabetical = np.array([
 
 
 
-
-class layout():
-    qwerty = qwerty
-    dvorak = dvorak
-    colemak = colemak
-    colemak_dh = colemak_dh
-    workman = workman
-    norman = norman
-    semimak_jq = semimak_jq
-    mtgap = mtgap
-    alphabetical = alphabetical
-
-
-class coordinate_grid():
-    standard = effort_grid_standard
-    matrix = effort_grid_matrix
-
-
-class effort_grid():
-    standard = effort_grid_standard
-    matrix = effort_grid_matrix
-
-
-class hand_placement():
-    home_row = home_row
-    hunt_and_peck = hunt_and_peck
-    gamer = gamer
-    pinkyless = pinkyless
+setup()
 
 
