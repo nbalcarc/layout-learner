@@ -26,7 +26,9 @@ def setup():
 
 
     class hand_placement():
-        home_row = home_row
+        home_row_us = home_row_us
+        home_row_in = home_row_in
+        augmented = augmented
         hunt_and_peck = hunt_and_peck
         gamer = gamer
         pinkyless = pinkyless
@@ -91,11 +93,27 @@ What keys are assigned to what fingers.
 """
 
 
-# standard home row finger placement
-home_row = np.array([
+# standard home row finger placement (in the United States)
+home_row_us = np.array([
     [0, 1, 2, 3, 3,   4, 4, 5, 6, 7],
     [0, 1, 2, 3, 3,   4, 4, 5, 6, 7],
     [0, 1, 2, 3, 3,   4, 4, 5, 6, 7],
+])
+
+
+# standard home row finger placement (in India)
+home_row_in = np.array([
+    [0, 1, 2, 3, 3,   4, 4, 5, 6, 7],
+    [0, 1, 2, 3, 3,   4, 4, 5, 6, 7],
+    [1, 2, 3, 3, 4,   4, 5, 6, 6, 7],
+])
+
+
+# augmented layout
+augmented = np.array([
+    [0, 1, 2, 3, 3,   4, 4, 5, 6, 7],
+    [0, 1, 2, 3, 3,   4, 4, 5, 6, 7],
+    [1, 2, 3, 3, 3,   4, 4, 5, 6, 7],
 ])
 
 

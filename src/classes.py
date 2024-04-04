@@ -29,10 +29,22 @@ class KeyboardConfig:
         self.hand_placements = hand_placements
 
 
-class Analyzer:
-    """Runs analytics on a hand and layout."""
-    def __init__(self, keyboard_config: KeyboardConfig):
-        self.keyboard_config = keyboard_config
-        self.hands = Hands(keyboard_config.hand_placements)
+#class Analyzer:
+#    """Runs analytics on a hand and layout."""
+#    def __init__(self, keyboard_config: KeyboardConfig):
+#        self.keyboard_config = keyboard_config
+#        self.hands = Hands(keyboard_config.hand_placements)
+
+
+class AnalyzerResults:
+    """Contains the results of running the analyzer on a KeyboardConfig."""
+    def __init__(self, speed: float, comfort: float):
+        self.speed = speed
+        self.comfort = comfort
+
+    
+
+
+
 
 
