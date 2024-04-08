@@ -3,20 +3,35 @@ import shutil
 from functools import reduce
 
 
-valid_chars = "abcdefghijklmnopqrstuvwxyz "
+valid_chars = "abcdefghijklmnopqrstuvwxyz"
+pseudo_chars = " ,./?!;:'\"&()-"
+
+
+def flatten_series(input: str, c: str) -> str:
+    """Flatten any repeats of the given char in the string."""
+    remove_list = set()
+    for i in range(1, len(input)):
+        if input[i] == c and input[i-1] == c:
+            remove_list.add(i)
+
+    filtered = map(lambda x: x[1], filter(lambda x: x[0] not in remove_list, enumerate(input)))
+    return "".join(filtered)
 
 
 def validize(input: str) -> str:
     """Remove all invalid characters."""
-    adjusted = map(lambda x: x if x in valid_chars else "_" , input.lower())
-    #collapsed = reduce(lambda a, x: a if x == "_" and a.endswith("_") else (a + x), adjusted)
-    #print(collapsed)
-    return "".join(list(adjusted))
+    fst = "".join(map(lambda x: x if x in valid_chars else ("-" if x in pseudo_chars else "_"), input.lower())) #remap all non-valid characters
+    #note: dashes mean an empty character (space matters), underscores mean reset
+    dash_flattened = flatten_series(fst, "-") #flatten all dashes
+    return dash_flattened
 
 
 def chunkify(input: str) -> list[str]:
     """Take a validized string and turn it into chunks."""
-    return list(filter(lambda x: len(x) > 1, input.split("_")))
+    splitted = input.split("_") #split on underscores
+    cleansed = map(lambda x: x.strip("-"), splitted) #remove all starting and ending dashes
+    no_shorts = filter(lambda x: len(x) > 4, cleansed) #remove all short lines
+    return list(no_shorts)
 
 
 def main():
