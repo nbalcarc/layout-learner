@@ -18,6 +18,17 @@ def flatten_series(input: str, c: str) -> str:
     return "".join(filtered)
 
 
+def flatten_series_map(input: str, c_from: str, c_to: str) -> str:
+    """Flatten any repeats of the given char in the string into a new char."""
+    remove_list = set()
+    for i in range(1, len(input)):
+        if input[i] == c and input[i-1] == c:
+            remove_list.add(i)
+
+    filtered = map(lambda x: x[1], filter(lambda x: x[0] not in remove_list, enumerate(input)))
+    return "".join(filtered)
+
+
 def validize(input: str) -> str:
     """Remove all invalid characters."""
     fst = "".join(map(lambda x: x if x in valid_chars else ("-" if x in pseudo_chars else "_"), input.lower())) #remap all non-valid characters
