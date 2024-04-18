@@ -1,4 +1,5 @@
-import classes
+import config
+from hands import Hands
 
 
 class Roll:
@@ -8,8 +9,15 @@ class Roll:
         self.finger = -1
 
 
-def analyze_without_comfort(keyboard_config: classes.KeyboardConfig, dataset: str) -> classes.AnalyzerResults:
+class AnalyzerResults:
+    """Contains the results of running the analyzer on a KeyboardConfig."""
+    def __init__(self, speed: float, comfort: float):
+        self.speed = speed
+        self.comfort = comfort
     
+
+def analyze_without_comfort(keyboard_config: config.KeyboardConfig, dataset: str) -> AnalyzerResults:
+    """Analyze a complete keyboard config without considering comfort."""
     '''
     consider these:
         same finger bigrams (same finger types two different consecutive letters)
@@ -19,8 +27,10 @@ def analyze_without_comfort(keyboard_config: classes.KeyboardConfig, dataset: st
         lateral stretch bigrams (next consecutive finger types on a column 2 away from last finger)
     '''
 
+    hands = Hands(keyboard_config.hand_placements, keyboard_config.layout)
 
 
-    return  classes.AnalyzerResults(0.0, 0.0)
+
+    return AnalyzerResults(0.0, 0.0)
 
 

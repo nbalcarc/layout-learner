@@ -1,4 +1,5 @@
 import numpy as np
+import numpy.typing as npt
 
 
 def setup():
@@ -34,6 +35,15 @@ def setup():
         pinkyless = pinkyless
 
 
+class KeyboardConfig:
+    """Contains important info about a keyboard."""
+    def __init__(self, layout: npt.NDArray, coordinate_grid: npt.NDArray, effort_grid: npt.NDArray, hand_placements: npt.NDArray):
+        self.layout = layout
+        self.coordinate_grid = coordinate_grid
+        self.effort_grid = effort_grid
+        self.hand_placements = hand_placements
+
+
 
 """
 ##### EFFORT GRID #####
@@ -50,7 +60,7 @@ effort_grid_standard = np.array([
     [3.0, 2.5, 2.1, 2.3, 2.6,   3.4, 2.2, 2.0, 2.4, 3.0],
     [1.6, 1.3, 1.1, 1.0, 2.9,   2.9, 1.0, 1.1, 1.3, 1.6],
     [3.5, 3.0, 2.7, 2.2, 3.7,   2.2, 1.8, 2.4, 2.7, 3.3],
-])
+]).flatten()
 
 
 # for a non-staggered keyboard (more for personal use)
@@ -58,7 +68,7 @@ effort_grid_matrix = np.array([
     [3.0, 2.4, 2.0, 2.2, 3.2,   3.2, 2.2, 2.0, 2.4, 3.0],
     [1.6, 1.3, 1.1, 1.0, 2.9,   2.9, 1.0, 1.1, 1.3, 1.6],
     [3.2, 2.6, 2.3, 1.6, 3.0,   3.0, 1.6, 2.3, 2.6, 3.2],
-])
+]).flatten()
 
 
 
@@ -75,13 +85,13 @@ coordinate_grid_standard = np.array([
     [(0.0, 0.00), (0.0, 1.00), (0.0, 2.00), (0.0, 3.00), (0.0, 4.00),   (0.0, 5.00), (0.0, 6.00), (0.0, 7.00), (0.0, 8.00), (0.0, 9.00)],
     [(1.0, 0.25), (1.0, 1.25), (1.0, 2.25), (1.0, 3.25), (1.0, 4.25),   (1.0, 5.25), (1.0, 6.25), (1.0, 7.25), (1.0, 8.25), (1.0, 9.25)],
     [(2.0, 0.75), (2.0, 1.75), (2.0, 2.75), (2.0, 3.75), (2.0, 4.75),   (2.0, 5.75), (2.0, 6.75), (2.0, 7.75), (2.0, 8.75), (2.0, 9.75)],
-])
+]).flatten()
 
 coordinate_grid_matrix = np.array([
     [(0.0, 0.00), (0.0, 1.00), (0.0, 2.00), (0.0, 3.00), (0.0, 4.00),   (0.0, 5.00), (0.0, 6.00), (0.0, 7.00), (0.0, 8.00), (0.0, 9.00)],
     [(1.0, 0.00), (1.0, 1.00), (1.0, 2.00), (1.0, 3.00), (1.0, 4.00),   (1.0, 5.00), (1.0, 6.00), (1.0, 7.00), (1.0, 8.00), (1.0, 9.00)],
     [(2.0, 0.00), (2.0, 1.00), (2.0, 2.00), (2.0, 3.00), (2.0, 4.00),   (2.0, 5.00), (2.0, 6.00), (2.0, 7.00), (2.0, 8.00), (2.0, 9.00)],
-])
+]).flatten()
 
 
 
@@ -98,7 +108,7 @@ home_row_us = np.array([
     [0, 1, 2, 3, 3,   4, 4, 5, 6, 7],
     [0, 1, 2, 3, 3,   4, 4, 5, 6, 7],
     [0, 1, 2, 3, 3,   4, 4, 5, 6, 7],
-])
+]).flatten()
 
 
 # standard home row finger placement (in India)
@@ -106,7 +116,7 @@ home_row_in = np.array([
     [0, 1, 2, 3, 3,   4, 4, 5, 6, 7],
     [0, 1, 2, 3, 3,   4, 4, 5, 6, 7],
     [1, 2, 3, 3, 4,   4, 5, 6, 6, 7],
-])
+]).flatten()
 
 
 # augmented layout
@@ -114,7 +124,7 @@ augmented = np.array([
     [0, 1, 2, 3, 3,   4, 4, 5, 6, 7],
     [0, 1, 2, 3, 3,   4, 4, 5, 6, 7],
     [1, 2, 3, 3, 3,   4, 4, 5, 6, 7],
-])
+]).flatten()
 
 
 # just two index fingers
@@ -122,7 +132,7 @@ hunt_and_peck = np.array([
     [3, 3, 3, 3, 3,   4, 4, 4, 4, 4],
     [3, 3, 3, 3, 3,   4, 4, 4, 4, 4],
     [3, 3, 3, 3, 3,   4, 4, 4, 4, 4],
-])
+]).flatten()
 
 
 # left hand home row, right hand hunt and peck
@@ -130,7 +140,7 @@ gamer = np.array([
     [0, 1, 2, 3, 3,   4, 4, 4, 4, 4],
     [0, 1, 2, 3, 3,   4, 4, 4, 4, 4],
     [0, 1, 2, 3, 3,   4, 4, 4, 4, 4],
-])
+]).flatten()
 
 
 # standard home row but without pinkies, may not be accurate for testing
@@ -138,7 +148,7 @@ pinkyless = np.array([
     [1, 1, 2, 3, 3,   4, 4, 5, 6, 6],
     [1, 1, 2, 3, 3,   4, 4, 5, 6, 6],
     [1, 1, 2, 3, 3,   4, 4, 5, 6, 6],
-])
+]).flatten()
 
 
 
@@ -154,7 +164,7 @@ qwerty = np.array([
     "qwertyuiop",
     "asdfghjkl;",
     "zxcvbnm,./",
-])
+]).flatten()
 
 
 # a little approximated, the symbols don't work the same as qwerty
@@ -162,35 +172,35 @@ dvorak = np.array([
     "/,.pyfgcrl",
     "aoeuidhtns",
     ";qjkxbmwvz",
-])
+]).flatten()
 
 
 colemak = np.array([
     "qwfpgjluy;",
     "arstdhneio",
     "zxcvbkh,./",
-])
+]).flatten()
 
 
 colemak_dh = np.array([
     "qwfpbjluy;",
     "arstgmneio",
     "zxcdvkh,./",
-])
+]).flatten()
 
 
 workman = np.array([
     "qdrwbjfup;",
     "ashtgyneoi",
     "zxmcvkl,./",
-])
+]).flatten()
 
 
 norman = np.array([
     "qwdfkjurl;",
     "asetgynioh",
     "zxcvbpm,./",
-])
+]).flatten()
 
 
 # approximation due to symbols
@@ -198,7 +208,7 @@ semimak_jq = np.array([
     "flhvz;wuoy",
     "srntkcdeai",
     "xjbmqpg,./",
-])
+]).flatten()
 
 
 # approximation due to symbols
@@ -206,14 +216,14 @@ mtgap = np.array([
     "ypoujkdlcw",
     "inea;mhtsr",
     "qz/.,bfgvx",
-])
+]).flatten()
 
 
 alphabetical = np.array([
     "abcdefghij",
     "klmnopqrs;",
     "tuvwxyz,./",
-])
+]).flatten()
 
 
 

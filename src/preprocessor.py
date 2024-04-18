@@ -7,17 +7,6 @@ valid_chars = "abcdefghijklmnopqrstuvwxyz"
 pseudo_chars = " ,./?!;:'\"&()-"
 
 
-def flatten_series(input: str, c: str) -> str:
-    """Flatten any repeats of the given char in the string."""
-    remove_list = set()
-    for i in range(1, len(input)):
-        if input[i] == c and input[i-1] == c:
-            remove_list.add(i)
-
-    filtered = map(lambda x: x[1], filter(lambda x: x[0] not in remove_list, enumerate(input)))
-    return "".join(filtered)
-
-
 def flatten_series_map(input: str, c_from: str, c_to: str, threshold: int) -> str:
     """Flatten any repeats of the given char in the string into a new char."""
     collected: list[str] = []
@@ -36,7 +25,6 @@ def flatten_series_map(input: str, c_from: str, c_to: str, threshold: int) -> st
             collected.append(ci)
             count = 0
 
-    #return reduce(lambda a, x: a + x, collected)
     return "".join(collected)
 
 
@@ -50,8 +38,6 @@ def validize(input: str) -> str:
 
 def chunkify(input: str, min_length: int) -> list[str]:
     """Take a validized string and turn it into chunks."""
-    #replaced = input.replace("+", "\n") #replace repeats with newlines
-    #splitted = replaced.split("_") #split on underscores
     splitted = input.split("_") #split on underscores
     splitted_more = reduce(lambda a, x: a + x, list(map(lambda x: x.split("+"), splitted))) #split on plus
     cleansed = map(lambda x: x.strip("-").strip("+"), splitted_more) #remove all starting and ending dashes
