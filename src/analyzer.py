@@ -27,7 +27,7 @@ def analyze_without_comfort(keyboard_config: config.KeyboardConfig, dataset: str
         lateral stretch bigrams (next consecutive finger types on a column 2 away from last finger)
     '''
 
-    hands = Hands(keyboard_config.hand_placements, keyboard_config.layout)
+    hands = Hands(keyboard_config.hand_placements, keyboard_config.layout, keyboard_config.coordinate_grid)
 
 
 

@@ -12,7 +12,7 @@ class Finger:
 
 class Hands:
     """Contains a set of fingers and their assigned keys on a keyboard."""
-    def __init__(self, hand_placements: npt.NDArray, keyboard_layout: npt.NDArray):
+    def __init__(self, hand_placements: npt.NDArray, keyboard_layout: npt.NDArray, coordinate_grid: npt.NDArray):
         #fingers = dict(map(lambda x: (x, Finger()), set(hand_placements))) #assign a Finger to an ID
         #self.fingermap = {i: fingers[h] for (i, h) in enumerate(hand_placements)} #assign keys to Fingers
         #self.last_finger = None
@@ -20,6 +20,7 @@ class Hands:
         #print(fingers)
 
         
+        self.coordinate_grid = coordinate_grid
         self.keymap = dict(map(lambda x: (x[1], x[0]), enumerate(reduce(lambda a, x: a + x, keyboard_layout))))
         finger_objs = [Finger() for _ in range(8)]
         self.fingermap: list[Finger] = list(map(lambda x: finger_objs[x], hand_placements))
@@ -84,8 +85,16 @@ class Hands:
         if not same_hand:
             scores[0] = alternation_const
 
-        # calculate distance penalty and update time TODO
+        # calculate distance penalty
+        if self.time - finger.last_used < 3: #no penalty for a gap of two keys or more
+            last: tuple[np.float64, np.float64] = self.coordinate_grid[finger.location]
+            cur: tuple[np.float64, np.float64] = self.coordinate_grid[cur_key]
+            dist = np.sqrt((last[0] - cur[0]) ** 2 + (last[1] - cur[1]) ** 2)
+            scores[4] = dist
+
+        # update time
         finger.last_used = self.time
+        finger.location = cur_key
 
         return 0
 
