@@ -13,30 +13,28 @@ class Finger:
 class Hands:
     """Contains a set of fingers and their assigned keys on a keyboard."""
     def __init__(self, hand_placements: npt.NDArray, keyboard_layout: npt.NDArray, coordinate_grid: npt.NDArray):
-        #fingers = dict(map(lambda x: (x, Finger()), set(hand_placements))) #assign a Finger to an ID
-        #self.fingermap = {i: fingers[h] for (i, h) in enumerate(hand_placements)} #assign keys to Fingers
-        #self.last_finger = None
-        #print(self.fingermap)
-        #print(fingers)
-
-        
         self.coordinate_grid = coordinate_grid
-        self.keymap = dict(map(lambda x: (x[1], x[0]), enumerate(reduce(lambda a, x: a + x, keyboard_layout))))
+        self.keymap = dict(map(lambda x: (x[1], x[0]), enumerate(reduce(lambda a, x: a + x, keyboard_layout)))) #key to index
         finger_objs = [Finger() for _ in range(8)]
-        self.fingermap: list[Finger] = list(map(lambda x: finger_objs[x], hand_placements))
-        #self.hand_fingers = list(map(lambda x: x < 5, hand_placements))
-        self.hand_fingers = hand_placements < 5
+        self.fingermap: list[Finger] = list(map(lambda x: finger_objs[x], hand_placements)) #index to Finger
+        self.hand_fingers = hand_placements < 5 #bool saying whether each index is on the left (True) or right (False) hand
+
+        self.reset()
+
+
+    def reset(self):
+        """Prepare for a clean run."""
         self.last_key = -1
         self.roll_count = 0
-        self.stats = np.zeros(7) #alternation index, repeats, stretches, bigram rolls, trigram rolls, redirects, distance
-        self.time = 0
+        #self.stats = np.zeros(7) #alternation index, repeats, stretches, bigram rolls, trigram rolls, redirects, distance
+        self.time = 0 #current time
 
-    def type_key(self, key: str) -> int:
-        """Updates Hand to type the given key, returns last time finger was used."""
+
+    def type_key(self, key: str) -> npt.NDArray:
+        """Updates Hand to type the given key, returns score for this character."""
         cur_key = self.keymap[key]
         last_key = self.last_key
         finger = self.fingermap[cur_key]
-        self.last_key = cur_key
 
         scores = np.zeros(5) #alternation +, repeat -, stretch -, rolling +-, distance -
 
@@ -49,6 +47,10 @@ class Hands:
         skipgram_const = -5
         stretch_const = -10
         alternation_const = 2
+
+        # account for not having typed yet
+        if last_key == -1:
+            last_key = cur_key
 
         # calculate some values
         same_hand_row = last_key // 5 == cur_key // 5
@@ -77,8 +79,8 @@ class Hands:
         # check for stretches
         if (abs(last_key - cur_key) == 1 #adjacent fingers
                 and same_hand
-                and (last_key // 10) - (cur_key // 10)) == 2: #2 row stretch
-
+                and ((last_key // 10) - (cur_key // 10)) == 2 #2 row stretch
+                ):
             scores[2] = stretch_const
 
         # check for hand alternation
@@ -92,10 +94,20 @@ class Hands:
             dist = np.sqrt((last[0] - cur[0]) ** 2 + (last[1] - cur[1]) ** 2)
             scores[4] = dist
 
-        # update time
+        # update time and other vars
         finger.last_used = self.time
         finger.location = cur_key
+        self.time += 1
+        self.last_key = cur_key
 
-        return 0
+        return scores
+
+
+    def type_data(self, data: list[str]):
+        """Run a full dataset on the Hands."""
+
+        for phrase in data:
+            for c in phrase:
+                scores = self.type_key(c)
 
 
