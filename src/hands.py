@@ -57,16 +57,6 @@ class Hands:
         6 - alternation
         '''
 
-        ## constants (to be passed as variable later)
-        #bigram_const = 10
-        #trigram_const = 15
-        #quadgram_const = 15
-        #redirect_const = -10
-        #repeat_const = -10
-        #skipgram_const = -5 
-        #stretch_const = -10
-        #alternation_const = 2
-
         # decide on the event
         if last_key == -1: #if very first press
             event = -1 #nothing
@@ -146,7 +136,7 @@ class Hands:
     def type_data(self, data: list[str]) -> tuple[npt.NDArray, npt.NDArray, float]:
         """Run a full dataset on the Hands. Returns statistics."""
 
-        events = np.zeros(7) #count of all events
+        events = np.zeros(9) #count of all events (7 from typing a key)
         time_gap_totals = np.zeros(26) #total gaps
         time_gap_counts = np.zeros(26) #numbers of occurences
         distance_totals = 0.0 #total distance
@@ -161,6 +151,8 @@ class Hands:
         4 - redirect stretch
         5 - stretch
         6 - alternation
+        7 - repeats
+        8 - skipgrams
         '''
 
         for phrase in data:
@@ -182,6 +174,12 @@ class Hands:
                         continue #don't save the stats
                     else: #update events array
                         events[event] += 1
+
+                    # count repeats and skipgrams
+                    if time_gap == 1:
+                        events[7] += 1
+                    elif time_gap == 2:
+                        events[8] += 1
 
                     distance_counts += 1
                     distance_totals += distance
