@@ -32,18 +32,21 @@ class Hands:
 
     def type_key(self, key: str) -> tuple[int, int, float]:
         """Updates Hand to type the given key, returns score for this character."""
+        
+        # handle gaps/spacers first
+        if key == "-":
+            self.roll = 0
+            self.time += 1
+            self.last_key = -1
+            return (-2, -1, -1)
+
         cur_key = self.keymap[key]
         last_key = self.last_key
         finger = self.fingermap[cur_key]
 
-        #scores = np.zeros(5) #alternation +, repeat -, stretch -, rolling +-, distance -
-
-        event: int = -1
-        time_gap: int = -1 #for repeats/skipgrams
-        distance: float = -1 #for repeats/skipgrams
-
         '''
         Events:
+        -2 - spacer
         -1 - nothing
         0 - bigram
         1 - trigram
@@ -63,14 +66,6 @@ class Hands:
         #skipgram_const = -5 
         #stretch_const = -10
         #alternation_const = 2
-
-        ## account for not having typed yet
-        #if last_key == -1:
-        #    last_key = cur_key
-
-        # calculate some values
-        #same_hand_row = last_key // 5 == cur_key // 5
-        #same_hand = self.hand_fingers[last_key] == self.hand_fingers[cur_key]
 
         # decide on the event
         if last_key == -1: #if very first press
@@ -104,14 +99,6 @@ class Hands:
                     self.roll = 0
                     event = 3 #redirect
 
-                #event = abs(self.roll)
-                #if abs(self.roll) < 2: #increase roll
-                #    self.roll += 1 * (1 if cur_key > last_key else -1)
-                #else:
-                #    self.roll = 0
-                #    # pentagrams are impossible assuming you don't use your thumbs like a sane human
-                #    # and redirects are impossible off of a quadgram, so we don't need to remember the roll
-
             elif self.fingermap[last_key] is self.fingermap[cur_key]: #using same finger
                 self.roll = 0
                 event = -1
@@ -131,38 +118,11 @@ class Hands:
             self.roll = 0
             event = 6 #alternation
 
-        ## cover rolling scores
-        #if self.roll_count == 0 and abs(last_key - cur_key) == 1 and same_hand_row: #start key roll
-        #    self.roll_count = last_key - cur_key
-        #    scores[3] = bigram_const
-        #elif self.roll_count != 0: #roll was happening
-        #    if np.sign(last_key) == np.sign(cur_key) and same_hand_row: #continue roll
-        #        self.roll_count = last_key - cur_key
-        #        scores[3] = trigram_const if abs(self.roll_count) == 3 else quadgram_const
-        #    elif abs(dif := (last_key + self.roll_count) - cur_key) == 1 and np.sign(dif) == np.sign(self.roll_count): #redirect
-        #        scores[3] = redirect_const
-        #        self.roll_count = 0 #reset rolling status
-        #    else: #rolling ended without redirect
-        #        self.roll_count = 0 #reset rolling status
-        #
-        ## check for repeats and skipgrams
-        #if finger.last_used == self.time - 1: #repeat finger bigram
-        #    scores[1] = repeat_const
-        #elif finger.last_used == self.time - 2: #skipgram
-        #    scores[1] = skipgram_const
-
-        ## check for stretches
-        #if (abs(last_key - cur_key) == 1 #adjacent fingers
-        #        and same_hand
-        #        and ((last_key // 10) - (cur_key // 10)) == 2 #2 row stretch
-        #        ):
-        #    scores[2] = stretch_const
-
-        ## check for hand alternation
-        #if not same_hand:
-        #    scores[0] = alternation_const
-
-        time_gap = self.time - finger.last_used
+        # grab time_gap
+        if finger.last_used == -1:
+            time_gap = -1 #if never pressed before, don't enact penalty
+        else:
+            time_gap = self.time - finger.last_used
 
         # calculate distance penalty
         if time_gap == 1 or time_gap == 2:
@@ -171,7 +131,7 @@ class Hands:
             dist = np.sqrt((last[0] - cur[0]) ** 2 + (last[1] - cur[1]) ** 2)
             distance = dist / time_gap #cut penalty in half if time_gap is 2
         else:
-            distance = 0 #no penalty for a gap of two keys or more
+            distance = 0 #no penalty for a gap of two keys or more (or never pressed)
 
         # update time and other vars
         finger.last_used = self.time
@@ -183,11 +143,50 @@ class Hands:
         return (event, time_gap, distance)
 
 
-    def type_data(self, data: list[str]):
-        """Run a full dataset on the Hands."""
+    def type_data(self, data: list[str]) -> tuple[npt.NDArray, npt.NDArray, float]:
+        """Run a full dataset on the Hands. Returns statistics."""
+
+        events = np.zeros(7) #count of all events
+        time_gap_totals = np.zeros(26) #total gaps
+        time_gap_counts = np.zeros(26) #numbers of occurences
+        distance_totals = 0.0 #total distance
+        distance_counts = 0 #number of keys pressed
+
+        '''
+        Events:
+        0 - bigram
+        1 - trigram
+        2 - quadgram
+        3 - redirect
+        4 - redirect stretch
+        5 - stretch
+        6 - alternation
+        '''
 
         for phrase in data:
             for c in phrase:
-                scores = self.type_key(c)
+                self.reset()
+
+                if c == "-": #spacer, there are no pluses
+                    pass #TODO
+                else: #normal key press
+                    time_gap_counts[self.keymap[c]] += 1 #we are adding the time gap to this key
+
+                    # run type_key() and update stats
+                    event, time_gap, distance = self.type_key(c)
+
+                    # update events array
+                    if event == -1: #nothing
+                        pass
+                    if event == -2: #spacer
+                        continue #don't save the stats
+                    else: #update events array
+                        events[event] += 1
+
+                    distance_counts += 1
+                    distance_totals += distance
+                    time_gap_totals[self.keymap[c]] += time_gap
+
+        return (events, time_gap_totals / time_gap_counts, distance_totals / distance_counts)
 
 
