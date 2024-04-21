@@ -162,11 +162,16 @@ class Hands:
         #if not same_hand:
         #    scores[0] = alternation_const
 
+        time_gap = self.time - finger.last_used
+
         # calculate distance penalty
-        if self.time - finger.last_used < 3: #no penalty for a gap of two keys or more
+        if time_gap == 1 or time_gap == 2:
             last: tuple[np.float64, np.float64] = self.coordinate_grid[finger.location]
             cur: tuple[np.float64, np.float64] = self.coordinate_grid[cur_key]
-            distance = np.sqrt((last[0] - cur[0]) ** 2 + (last[1] - cur[1]) ** 2)
+            dist = np.sqrt((last[0] - cur[0]) ** 2 + (last[1] - cur[1]) ** 2)
+            distance = dist / time_gap #cut penalty in half if time_gap is 2
+        else:
+            distance = 0 #no penalty for a gap of two keys or more
 
         # update time and other vars
         finger.last_used = self.time
