@@ -134,7 +134,11 @@ class Hands:
 
 
     def type_data(self, data: list[str]) -> tuple[npt.NDArray, npt.NDArray, float]:
-        """Run a full dataset on the Hands. Returns statistics."""
+        """
+        Run a full dataset on the Hands. Returns statistics.
+
+        Return: (all events, avg time gap per key, avg overall distance)
+        """
 
         events = np.zeros(9) #count of all events (7 from typing a key)
         time_gap_totals = np.zeros(26) #total gaps

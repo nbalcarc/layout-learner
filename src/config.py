@@ -37,6 +37,14 @@ def setup():
 
 class KeyboardConfig:
     """Contains important info about a keyboard."""
+    def __init__(self, layout: npt.NDArray, coordinate_grid: npt.NDArray, hand_placements: npt.NDArray):
+        self.layout = layout
+        self.coordinate_grid = coordinate_grid
+        self.hand_placements = hand_placements
+
+
+class KeyboardConfigOld:
+    """Contains important info about a keyboard."""
     def __init__(self, layout: npt.NDArray, coordinate_grid: npt.NDArray, effort_grid: npt.NDArray, hand_placements: npt.NDArray):
         self.layout = layout
         self.coordinate_grid = coordinate_grid

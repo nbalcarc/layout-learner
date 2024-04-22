@@ -45,3 +45,5 @@ policy = np.argmax(Q, axis=1)
 
 # Apply the optimal policy to get the final keyboard layout
 final_layout = apply_policy(initial_layout, policy)
+
+

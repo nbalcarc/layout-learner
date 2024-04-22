@@ -3,13 +3,14 @@ The DQN class defines the neural network architecture.
 The ReplayBuffer class is used to store and sample experiences for training.
 The DQNAgent class implements the DQN algorithm, including the training procedure and experience replay.
 The agent interacts with the environment, collects experiences, and updates the neural network parameters to learn the Q-values.
-""""
+"""
+
 import numpy as np
 import tensorflow as tf
 from collections import deque
 
-# Define the neural network architecture
 class DQN(tf.keras.Model):
+    """Define the neural network architecture."""
     def __init__(self, num_actions):
         super(DQN, self).__init__()
         self.dense1 = tf.keras.layers.Dense(64, activation='relu')
@@ -21,8 +22,8 @@ class DQN(tf.keras.Model):
         x = self.dense2(x)
         return self.dense3(x)
 
-# Define the replay buffer
 class ReplayBuffer:
+    """Define the replay buffer."""
     def __init__(self, max_size):
         self.buffer = deque(maxlen=max_size)
 
@@ -33,8 +34,8 @@ class ReplayBuffer:
         idx = np.random.choice(len(self.buffer), batch_size, replace=False)
         return [self.buffer[i] for i in idx]
 
-# Define the Deep Q-Network algorithm
 class DQNAgent:
+    """Define the Deep Q-Network algorithm."""
     def __init__(self, num_actions, state_dim):
         self.num_actions = num_actions
         self.state_dim = state_dim
@@ -79,10 +80,10 @@ class DQNAgent:
         if self.epsilon > self.epsilon_min:
             self.epsilon *= self.epsilon_decay
 
-# Initialize the DQN agent
+# initialize the DQN agent
 agent = DQNAgent(num_actions, state_dim)
 
-# Train the DQN agent
+# train the DQN agent
 for episode in range(num_episodes):
     state = initial_state
     done = False
@@ -93,3 +94,5 @@ for episode in range(num_episodes):
         state = next_state
         agent.train()
     agent.update_target_model()
+
+

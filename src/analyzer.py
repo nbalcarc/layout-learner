@@ -17,16 +17,12 @@ import numpy.typing as npt
 #        self.comfort = comfort
     
 
-def analyze_without_comfort(keyboard_config: config.KeyboardConfig, dataset: list[str]) -> tuple[npt.NDArray, float]:
-    """Analyze a complete keyboard config without considering comfort."""
-    '''
-    consider these:
-        same finger bigrams (same finger types two different consecutive letters)
-        same finger skipgrams (same finger types two different letters with a gap of 1)
-        rolled bi/trigrams (a string of consecutive fingers on the same row)
-        redirects (a bigram roll followed by a letter on a finger behind the roll)
-        lateral stretch bigrams (next consecutive finger types on a column 2 away from last finger)
-    '''
+def analyze(keyboard_config: config.KeyboardConfig, dataset: list[str]) -> tuple[npt.NDArray, float]:
+    """
+    Analyze a complete keyboard config without considering comfort.
+
+    Returns: (counts of events, score)
+    """
 
     hands = Hands(keyboard_config.hand_placements, keyboard_config.layout, keyboard_config.coordinate_grid)
     events, time_gaps, distance = hands.type_data(dataset)
@@ -51,7 +47,6 @@ def analyze_without_comfort(keyboard_config: config.KeyboardConfig, dataset: lis
     redirect_const = -10
     stretch_const = -10
     alternation_const = 2
-    #repeat_const = -10 #will be halved in two for a skipgram
     repeat_const = -10
     skipgram_const = -5
     distance_const = 1
@@ -68,7 +63,6 @@ def analyze_without_comfort(keyboard_config: config.KeyboardConfig, dataset: lis
         distance * distance_const #may be unnecessary because we already account for repeats and skipgrams
     )
 
-    #return AnalyzerResults(0.0, 0.0)
     return (events, points)
 
 
