@@ -1,23 +1,28 @@
-import config
 from hands import Hands
 import numpy.typing as npt
 
 
-#class Roll:
-#    def __init__(self):
-#        self.direction = -1
-#        self.row = -1
-#        self.finger = -1
+class KeyboardConfig:
+    """Contains important info about a keyboard."""
+    def __init__(self, layout: npt.NDArray, coordinate_grid: npt.NDArray, hand_placements: npt.NDArray):
+        self.layout = layout
+        self.coordinate_grid = coordinate_grid
+        self.hand_placements = hand_placements
 
 
-#class AnalyzerResults:
-#    """Contains the results of running the analyzer on a KeyboardConfig."""
-#    def __init__(self, speed: float, comfort: float):
-#        self.speed = speed
-#        self.comfort = comfort
-    
+actions = [(x, y) for x in range(30) for y in range(x)]
+def layout_swap(layout: npt.NDArray, action: int):
+    """Edits a layout inplace, given the provided swap action."""
+    if action < 0 or action > 869:
+        raise Exception("layout_swap function received an action outside of [0, 869]!")
 
-def analyze(keyboard_config: config.KeyboardConfig, dataset: list[str]) -> tuple[npt.NDArray, float]:
+    x, y = actions[action]
+    c = layout[x]
+    layout[x] = layout[y]
+    layout[y] = c
+
+
+def analyze(keyboard_config: KeyboardConfig, dataset: list[str]) -> tuple[npt.NDArray, float]:
     """
     Analyze a complete keyboard config without considering comfort.
 
