@@ -1,4 +1,5 @@
 from hands import Hands
+import numpy as np
 import numpy.typing as npt
 
 
@@ -13,7 +14,7 @@ class KeyboardConfig:
 actions = [(x, y) for x in range(30) for y in range(x)]
 def layout_swap(layout: npt.NDArray, action: int):
     """Edits a layout inplace, given the provided swap action."""
-    if action < 0 or action > 869:
+    if action < 0 or action >= 435:
         raise Exception("layout_swap function received an action outside of [0, 869]!")
 
     x, y = actions[action]
@@ -26,11 +27,11 @@ def analyze(keyboard_config: KeyboardConfig, dataset: list[str]) -> tuple[npt.ND
     """
     Analyze a complete keyboard config without considering comfort.
 
-    Returns: (counts of events, score)
+    Returns: (counts of events, avg finger distance, time gaps, use std, reward)
     """
 
     hands = Hands(keyboard_config.hand_placements, keyboard_config.layout, keyboard_config.coordinate_grid)
-    events, distance, time_gaps, use_deviation = hands.type_data(dataset)
+    events, avg_distance, time_gaps, use_deviation = hands.type_data(dataset)
 
 
     '''
@@ -66,9 +67,36 @@ def analyze(keyboard_config: KeyboardConfig, dataset: list[str]) -> tuple[npt.ND
         events[6] + alternation_const +
         events[7] * repeat_const +
         events[8] * skipgram_const +
-        distance * distance_const #may be unnecessary because we already account for repeats and skipgrams
+        avg_distance * distance_const #may be unnecessary because we already account for repeats and skipgrams
     )
 
-    return (events, distance, time_gaps, use_deviation, points)
+    return (events, avg_distance, time_gaps, use_deviation, points)
+
+
+class Environment:
+    """Bridge between reinforcement learning and the analyzer."""
+    def __init__(self, keyboard_config: KeyboardConfig, max_iterations: int):
+        self.keyboard_config = keyboard_config
+        self.max_iterations = max_iterations
+        self.iteration = 0
+
+
+    def step(self, action: int) -> tuple[npt.NDArray, float, bool]:
+        """
+        Apply an action
+
+        Returns: (next state, reward, is done)
+        """
+
+        done = self.iteration >= self.max_iterations #set a cap
+        self.iteration += 1
+
+        new_state = self.keyboard_config.layout.copy()
+        layout_swap(new_state, action) #apply action
+        self.keyboard_config.layout = new_state
+
+        events, avg_distance, time_gaps, use_deviation, reward = analyze(self.keyboard_config, [""])
+
+        return new_state, reward, done
 
 

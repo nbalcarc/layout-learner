@@ -145,9 +145,7 @@ class Hands:
         """
         Run a full dataset on the Hands. Returns statistics.
 
-        Return: (all events, avg time gap per key, avg overall distance)
-
-        Note: second return value may have NaN's
+        Return: (all events, avg overall distance, avg time gap per finger, std of finger usage)
         """
 
         events = np.zeros(9) #count of all events (7 from typing a key)
