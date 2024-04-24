@@ -73,15 +73,21 @@ def analyze(keyboard_config: KeyboardConfig, dataset: list[str]) -> tuple[npt.ND
     return (events, avg_distance, time_gaps, use_deviation, points)
 
 
+def collect_data() -> list[str]:
+    with open("../data/processed/.compiled.txt") as file:
+        return file.read().splitlines()
+
+
 #def 
 
 
 class Environment:
     """Bridge between reinforcement learning and the analyzer."""
-    def __init__(self, keyboard_config: KeyboardConfig, max_iterations: int):
+    def __init__(self, keyboard_config: KeyboardConfig, max_iterations: int, data: list[str]):
         self.keyboard_config = keyboard_config
         self.max_iterations = max_iterations
         self.iteration = 0
+        self.data = data
 
 
     def step(self, action: int) -> tuple[npt.NDArray, float, bool, tuple[npt.NDArray, float, npt.NDArray, float]]:
@@ -98,7 +104,7 @@ class Environment:
         layout_swap(new_state, action) #apply action
         self.keyboard_config.layout = new_state
 
-        events, avg_distance, time_gaps, use_deviation, reward = analyze(self.keyboard_config, [""])
+        events, avg_distance, time_gaps, use_deviation, reward = analyze(self.keyboard_config, self.data)
 
         return new_state, reward, done, (events, avg_distance, time_gaps, use_deviation)
 
