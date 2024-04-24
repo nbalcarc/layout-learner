@@ -90,6 +90,32 @@ def to_keys(layout: npt.NDArray) -> npt.NDArray:
     return np.array(list(map(lambda x: config.layout.alphabetical[x], layout)))
 
 
+#def save_data_simple(data: tuple[tuple[npt.NDArray, float, npt.NDArray, float], float], epoch: int):
+#    #return new_state, reward, done, (events, avg_distance, time_gaps, use_deviation)
+#    dicted = {
+#        "events": data[0][0],
+#        "avg_distance": data[0][1],
+#        "time_gaps": data[0][2],
+#        "use_deviation": data[0][3],
+#        "reward": data[1],
+#    }
+#    with open(f"pickles/output_{epoch}.pkl", "wb") as file:
+#        pickle.dump(dicted, file)
+
+
+def save_data_simple(data: tuple[list[tuple[tuple[npt.NDArray, float, npt.NDArray, float], float]], npt.NDArray], epoch: int):
+    stats, layout = data
+    dicted = list(map(lambda x: {
+        "events": x[0][0],
+        "avg_distance": x[0][1],
+        "time_gaps": x[0][2],
+        "use_deviation": x[0][3],
+        "reward": x[1],
+    }, stats))
+    with open(f"pickles/output_{epoch}.pkl", "wb") as file:
+        pickle.dump((dicted, layout), file)
+
+
 def save_data(data: list[tuple[tuple[npt.NDArray, float, npt.NDArray, float], float]]):
     #return new_state, reward, done, (events, avg_distance, time_gaps, use_deviation)
     dicted = list(map(lambda x: {

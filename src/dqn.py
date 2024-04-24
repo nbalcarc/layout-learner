@@ -103,10 +103,10 @@ class DQNAgent:
 agent = DQNAgent(num_actions = 435, state_dim = 30)
 
 data = interface.collect_data()
-collected_stats = []
 
 # Train the DQN agent
-for episode in range(1): # No. of episodes
+for episode in range(1000): # No. of episodes
+    collected_stats = []
     
     
     # Initial state - To be initialized
@@ -129,13 +129,14 @@ for episode in range(1): # No. of episodes
 
         agent.replay_buffer.add((state, action, reward, next_state, done)) #remember this frame
         state = next_state
+        print(interface.to_keys(state))
         agent.train() #train the model one step
         print(f"REWARD: {reward}")
         
         epoch += 1
     agent.update_target_model()
+    interface.save_data_simple((collected_stats, interface.to_keys(state)), episode)
 
-interface.save_data(collected_stats)
 ###########################################################################
 
 
