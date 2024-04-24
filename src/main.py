@@ -19,6 +19,8 @@ def test_stock_layouts():
     with open("../data/processed/.compiled.txt") as file:
         lines = file.read().splitlines()
 
+    #lines = ["dfsdfs"]
+
     results = dict()
 
     for layout, name in layouts:

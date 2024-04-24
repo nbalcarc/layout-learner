@@ -32,6 +32,7 @@ def analyze(keyboard_config: KeyboardConfig, dataset: list[str]) -> tuple[npt.ND
     hands = Hands(keyboard_config.hand_placements, keyboard_config.layout, keyboard_config.coordinate_grid)
     events, time_gaps, distance = hands.type_data(dataset)
 
+
     '''
     Events:
     0 - bigram

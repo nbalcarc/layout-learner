@@ -46,7 +46,7 @@ class Hands:
 
         '''
         Events:
-        -2 - spacer
+        -2 - spacer (DEPRECATED)
         -1 - nothing
         0 - bigram
         1 - trigram
@@ -61,8 +61,11 @@ class Hands:
         if last_key == -1: #if very first press
             event = -1 #nothing
 
-        elif (self.fingermap[last_key].id // 5) == (self.fingermap[cur_key].id // 5): #same hand
-            if abs(self.fingermap[last_key].id - self.fingermap[cur_key].id) == 1 and abs(last_key - cur_key) == 1: #using same-row adjacent fingers, could be a roll
+        elif (self.fingermap[last_key].id // 4) == (self.fingermap[cur_key].id // 4): #same hand
+            if (abs(self.fingermap[last_key].id - self.fingermap[cur_key].id) == 1 #adjacent fingers
+                and abs(last_key - cur_key) == 1 #adjacent keys
+                and self.time - self.fingermap[last_key].last_used == 1 #contiguous (no gaps)
+            ): #using same-row adjacent fingers, could be a roll
                 if cur_key > last_key and self.roll >= 0: #right-wise roll
                     if self.roll == 0:
                         self.roll = 1
@@ -94,11 +97,16 @@ class Hands:
                 event = -1
 
             elif abs(last_key // 10 - cur_key // 10) == 2: #2 rows away, stretch
-                self.roll = 0
-                if (self.roll > 0 and cur_key < last_key) or (self.roll < 0 and cur_key > last_key): #redirect stretch
+                #if (self.roll > 0 and cur_key < last_key) or (self.roll < 0 and cur_key > last_key): #redirect stretch
+                if (self.roll > 0 and (cur_key % 5) < (last_key % 5)) or (self.roll < 0 and (cur_key % 5) > (last_key % 5)): #redirect stretch
                     event = 4 #redirect stretch
                 else:
                     event = 5 #stretch
+                self.roll = 0
+
+            elif self.roll != 0 and np.sign(self.roll) and abs(cur_key - last_key) in [2, 3]: #redirect (bigram or trigram redirected)
+                self.roll = 0
+                event = 3
 
             else: #same hand but not a stretch, roll, or redirect
                 self.roll = 0
@@ -166,7 +174,9 @@ class Hands:
             for c in phrase:
 
                 if c == "-": #spacer, there are no pluses
-                    pass #TODO
+                    self.roll = 0
+                    self.time += 1
+
                 else: #normal key press
                     time_gap_counts[self.keymap[c]] += 1 #we are adding the time gap to this key
 
@@ -176,8 +186,8 @@ class Hands:
                     # update events array
                     if event == -1: #nothing
                         pass
-                    if event == -2: #spacer
-                        continue #don't save the stats
+                    #elif event == -2: #spacer
+                    #    continue #don't save the stats
                     else: #update events array
                         events[event] += 1
 
@@ -190,6 +200,11 @@ class Hands:
                     distance_counts += 1
                     distance_totals += distance
                     time_gap_totals[self.keymap[c]] += time_gap
+
+        # remove double/triple counting of bigrams and trigrams
+        events[1] -= events[2] #remove quadgrams from trigrams
+        events[0] -= events[2] #remove quadgrams from bigrams
+        events[0] -= events[1] #remove trigrams from bigrams
 
         return (events, time_gap_totals / time_gap_counts, distance_totals / distance_counts)
 
