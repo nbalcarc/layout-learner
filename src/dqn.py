@@ -83,7 +83,9 @@ class DQNAgent:
         dones = np.array([experience[4] for experience in minibatch])
 
         # Q-Values from the target(to-be-finalized) model
-        target = rewards + (1 - dones) * self.gamma * np.amax(self.target_model.predict(next_states), axis=1)
+        predicted_value = self.target_model.predict(next_states)
+        print(predicted_value)
+        target = rewards + (1 - dones) * self.gamma * np.amax( predicted_value, axis=1)
 
         target_f = self.model.predict(states) # Actions from main model (latest trained)
         target_f[np.arange(self.batch_size), actions] = target # Maps the experiences with 
@@ -95,8 +97,10 @@ class DQNAgent:
 
 ###########################################################################
 # Initialize the DQN agent
-tf.debugging.set_log_device_placement(True) #To fetch GPU automatically
+#tf.debugging.set_log_device_placement(True) #To fetch GPU automatically
 agent = DQNAgent(num_actions = 435, state_dim = 30)
+
+data = interface.collect_data()
 
 # Train the DQN agent
 for episode in range(20): # No. of episodes
@@ -110,7 +114,7 @@ for episode in range(20): # No. of episodes
                                         config.coordinate_grid.standard, 
                                         config.hand_placement.home_row_us)
 
-    env = interface.Environment(keyboard_config = keyboard, max_iterations = 500)
+    env = interface.Environment(keyboard_config = keyboard, max_iterations = 500, data=data)
     done = False
     epoch = 1
     while not done:
