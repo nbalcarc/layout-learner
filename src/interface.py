@@ -36,25 +36,25 @@ def analyze(keyboard_config: KeyboardConfig, dataset: list[str]) -> tuple[npt.ND
 
     '''
     Events:
-    0 - bigram
-    1 - trigram
-    2 - quadgram
-    3 - redirect
-    4 - redirect stretch
-    5 - stretch
-    6 - alternation
-    7 - repeats
-    8 - skipgrams
+    0 - bigram - Eg: ER, AS, OP
+    1 - trigram - Eg: WER, RTY
+    2 - quadgram - EG: ASDF
+    3 - redirect - Bigram and opp. direction (Can be both ways) - Eg: ERW, IOPU, IUO, UIU, DFS 
+    4 - redirect stretch - Eg: ERC, ERX (Combination of redirect & stretch)
+    5 - stretch - Eg: RX (2 rows apart, stretch 2 immediate fingers)
+    6 - alternation - Switching hands b/w each letter
+    7 - repeats - Same finger twice - Eg: ED, FT
+    8 - skipgrams - eg: ETD, ETE, SOW - Same finger used twice, with in-b/w 1 any character but not the same finger and character
     '''
 
     # constants (to be passed as multipliers)
-    bigram_const = 10
+    bigram_const = 8
     trigram_const = 15
-    quadgram_const = 15
+    quadgram_const = 50
     redirect_const = -10
-    stretch_const = -10
+    stretch_const = -12
     alternation_const = 2
-    repeat_const = -10
+    repeat_const = -12
     skipgram_const = -5
     distance_const = 1
 
@@ -101,11 +101,11 @@ class Environment:
         self.iteration += 1
 
         new_state = self.keyboard_config.layout.copy()
+        print(new_state)
         layout_swap(new_state, action) #apply action
         self.keyboard_config.layout = new_state
 
         events, avg_distance, time_gaps, use_deviation, reward = analyze(self.keyboard_config, self.data)
 
         return new_state, reward, done, (events, avg_distance, time_gaps, use_deviation)
-
 

@@ -7,6 +7,9 @@ The agent interacts with the environment, collects experiences, and updates the 
 import numpy as np
 import tensorflow as tf
 from collections import deque
+import interface
+import config
+
 
 
 class DQN(tf.keras.Model):
@@ -92,25 +95,32 @@ class DQNAgent:
 
 ###########################################################################
 # Initialize the DQN agent
+tf.debugging.set_log_device_placement(True) #To fetch GPU automatically
 agent = DQNAgent(num_actions = 435, state_dim = 30)
 
 # Train the DQN agent
-for episode in range(num_episodes = 20):
+for episode in range(20): # No. of episodes
+    
+    
     # Initial state - To be initialized
-    state = np.array([
-        "abcdefghij",
-        "klmnopqrs;",
-        "tuvwxyz,./",
-        ]).flatten()
+    state =  config.layout.alphabetical
+    print(state)
+
+    keyboard = interface.KeyboardConfig(state, 
+                                        config.coordinate_grid.standard, 
+                                        config.hand_placement.home_row_us)
+
+    env = interface.Environment(keyboard_config = keyboard, max_iterations = 500)
     done = False
     epoch = 1
     while not done:
         action = agent.act(state)
-        next_state, reward, done = env.step(action)
+        next_state, reward, done, stats = env.step(action) 
         agent.replay_buffer.add((state, action, reward, next_state, done))
         state = next_state
         agent.train()
-        print("------------EPOCH",epoch,"------------")
+        print("------------EPOCH - ",epoch,"------------")
+        
         epoch += 1
     agent.update_target_model()
 ###########################################################################
