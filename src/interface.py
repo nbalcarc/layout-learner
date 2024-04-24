@@ -73,6 +73,9 @@ def analyze(keyboard_config: KeyboardConfig, dataset: list[str]) -> tuple[npt.ND
     return (events, avg_distance, time_gaps, use_deviation, points)
 
 
+#def 
+
+
 class Environment:
     """Bridge between reinforcement learning and the analyzer."""
     def __init__(self, keyboard_config: KeyboardConfig, max_iterations: int):

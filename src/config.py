@@ -1,4 +1,5 @@
 import numpy as np
+from functools import reduce
 
 
 def setup():
@@ -150,70 +151,70 @@ Used to compare our learned layouts vs real existing layouts.
 """
 
 
-qwerty = np.array([
+qwerty = np.array(list(reduce(lambda a, x: a+x, [
     "qwertyuiop",
     "asdfghjkl;",
     "zxcvbnm,./",
-]).flatten()
+])))
 
 
 # a little approximated, the symbols don't work the same as qwerty
-dvorak = np.array([
+dvorak = np.array(list(reduce(lambda a, x: a+x, [
     "/,.pyfgcrl",
     "aoeuidhtns",
     ";qjkxbmwvz",
-]).flatten()
+])))
 
 
-colemak = np.array([
+colemak = np.array(list(reduce(lambda a, x: a+x, [
     "qwfpgjluy;",
     "arstdhneio",
     "zxcvbkm,./",
-]).flatten()
+])))
 
 
-colemak_dh = np.array([
+colemak_dh = np.array(list(reduce(lambda a, x: a+x, [
     "qwfpbjluy;",
     "arstgmneio",
     "zxcdvkh,./",
-]).flatten()
+])))
 
 
-workman = np.array([
+workman = np.array(list(reduce(lambda a, x: a+x, [
     "qdrwbjfup;",
     "ashtgyneoi",
     "zxmcvkl,./",
-]).flatten()
+])))
 
 
-norman = np.array([
+norman = np.array(list(reduce(lambda a, x: a+x, [
     "qwdfkjurl;",
     "asetgynioh",
     "zxcvbpm,./",
-]).flatten()
+])))
 
 
 # approximation due to symbols
-semimak_jq = np.array([
+semimak_jq = np.array(list(reduce(lambda a, x: a+x, [
     "flhvz;wuoy",
     "srntkcdeai",
     "xjbmqpg,./",
-]).flatten()
+])))
 
 
 # approximation due to symbols
-mtgap = np.array([
+mtgap = np.array(list(reduce(lambda a, x: a+x, [
     "ypoujkdlcw",
     "inea;mhtsr",
     "qz/.,bfgvx",
-]).flatten()
+])))
 
 
-alphabetical = np.array([
+alphabetical = np.array(list(reduce(lambda a, x: a+x, [
     "abcdefghij",
     "klmnopqrs;",
     "tuvwxyz,./",
-]).flatten()
+])))
 
 
 
