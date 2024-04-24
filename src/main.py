@@ -29,11 +29,12 @@ def test_stock_layouts():
         analyzed = analyze(keyboard_config, lines)
         results[name] = analyzed
 
-    for layout, (events, time_gaps, distance, score) in results.items():
+    for layout, (events, distance, time_gaps, use_deviation, score, ) in results.items():
         print(f"\n>>> RESULTS FOR {layout}")
         print(f"EVENTS: {events}")
-        print(f"TIME_GAPS: {time_gaps}")
         print(f"DISTANCE: {distance}")
+        print(f"TIME_GAPS: {time_gaps}")
+        print(f"USE_DEVIATION: {use_deviation}")
         print(f"SCORE: {score}")
 
     #for layout, analyzed in results:

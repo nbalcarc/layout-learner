@@ -141,7 +141,7 @@ class Hands:
         return (event, time_gap, distance)
 
 
-    def type_data(self, data: list[str]) -> tuple[npt.NDArray, npt.NDArray, float]:
+    def type_data(self, data: list[str]) -> tuple[npt.NDArray, float, npt.NDArray, float]:
         """
         Run a full dataset on the Hands. Returns statistics.
 
@@ -151,8 +151,8 @@ class Hands:
         """
 
         events = np.zeros(9) #count of all events (7 from typing a key)
-        time_gap_totals = np.zeros(30) #total gaps
-        time_gap_counts = np.zeros(30) #numbers of occurences
+        time_gap_totals = np.zeros(8) #total gaps
+        time_gap_counts = np.zeros(8) #numbers of occurences
         distance_totals = 0.0 #total distance
         distance_counts = 0 #number of keys pressed
 
@@ -178,7 +178,6 @@ class Hands:
                     self.time += 1
 
                 else: #normal key press
-                    time_gap_counts[self.keymap[c]] += 1 #we are adding the time gap to this key
 
                     # run type_key() and update stats
                     event, time_gap, distance = self.type_key(c)
@@ -199,13 +198,23 @@ class Hands:
 
                     distance_counts += 1
                     distance_totals += distance
-                    time_gap_totals[self.keymap[c]] += time_gap
+
+                    if time_gap > 0:
+                        time_gap_counts[self.fingermap[self.keymap[c]].id] += 1 #increase count of this finger
+                        time_gap_totals[self.fingermap[self.keymap[c]].id] += time_gap #add the time gap for this finger
+                    else:
+                        pass #don't consider time gaps for unpressed keys
 
         # remove double/triple counting of bigrams and trigrams
         events[1] -= events[2] #remove quadgrams from trigrams
         events[0] -= events[2] #remove quadgrams from bigrams
         events[0] -= events[1] #remove trigrams from bigrams
 
-        return (events, time_gap_totals / time_gap_counts, distance_totals / distance_counts)
+        # calculate finger use factor
+        time_gap_averages = time_gap_totals / time_gap_counts
+        time_gap_normalized = time_gap_averages / time_gap_averages.sum()
+        time_gap_deviation = float(np.std(time_gap_normalized))
+
+        return (events, distance_totals / distance_counts, time_gap_averages, time_gap_deviation)
 
 
