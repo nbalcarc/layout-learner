@@ -1,6 +1,7 @@
 from hands import Hands
 import numpy as np
 import numpy.typing as npt
+import config
 
 
 class KeyboardConfig:
@@ -78,7 +79,18 @@ def collect_data() -> list[str]:
         return file.read().splitlines()
 
 
-#def 
+def to_ints(layout: npt.NDArray) -> npt.NDArray:
+    """Convert a layout to ints."""
+    return np.array([x for x in range(layout.size)])
+
+
+def to_keys(layout: npt.NDArray) -> npt.NDArray:
+    """Convert ints to a layout."""
+    return np.array(list(map(lambda x: config.layout.alphabetical[x], layout)))
+
+
+def save_data(data: list[tuple[npt.NDArray, float, npt.NDArray, float, float]]):
+    pass
 
 
 class Environment:
@@ -101,11 +113,13 @@ class Environment:
         self.iteration += 1
 
         new_state = self.keyboard_config.layout.copy()
-        print(new_state)
+        #print(new_state)
         layout_swap(new_state, action) #apply action
-        self.keyboard_config.layout = new_state
+        self.keyboard_config.layout = to_keys(new_state)
 
         events, avg_distance, time_gaps, use_deviation, reward = analyze(self.keyboard_config, self.data)
+        self.keyboard_config.layout = new_state
 
         return new_state, reward, done, (events, avg_distance, time_gaps, use_deviation)
+
 

@@ -107,7 +107,7 @@ for episode in range(20): # No. of episodes
     
     
     # Initial state - To be initialized
-    state =  config.layout.alphabetical
+    state = interface.to_ints(config.layout.alphabetical)
     print(state)
 
     keyboard = interface.KeyboardConfig(state, 
@@ -128,3 +128,5 @@ for episode in range(20): # No. of episodes
         epoch += 1
     agent.update_target_model()
 ###########################################################################
+
+

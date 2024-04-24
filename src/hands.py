@@ -15,10 +15,10 @@ class Hands:
     """Contains a set of fingers and their assigned keys on a keyboard."""
     def __init__(self, hand_placements: npt.NDArray, keyboard_layout: npt.NDArray, coordinate_grid: npt.NDArray):
         self.coordinate_grid = coordinate_grid
+        print(keyboard_layout)
         self.keymap = dict(map(lambda x: (x[1], x[0]), enumerate(reduce(lambda a, x: a + x, keyboard_layout)))) #key to index
         finger_objs = [Finger(i) for i in range(8)]
         self.fingermap: list[Finger] = list(map(lambda x: finger_objs[x], hand_placements)) #index to Finger
-        #self.hand_fingers = hand_placements < 5 #bool saying whether each index is on the left (True) or right (False) hand
 
         self.reset()
 
