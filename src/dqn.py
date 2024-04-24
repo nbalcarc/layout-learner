@@ -48,7 +48,9 @@ class DQNAgent:
         self.num_actions = num_actions
         self.state_dim = state_dim
         self.model = DQN(num_actions)
+        self.model.compile(optimizer = "adam", loss = "mse")
         self.target_model = DQN(num_actions)
+        self.target_model.compile(optimizer = "adam", loss = "mse")
         self.target_model.set_weights(self.model.get_weights())
         self.optimizer = tf.keras.optimizers.Adam(learning_rate=0.0001)
         self.replay_buffer = ReplayBuffer(max_size=10000)
@@ -101,32 +103,39 @@ class DQNAgent:
 agent = DQNAgent(num_actions = 435, state_dim = 30)
 
 data = interface.collect_data()
+collected_stats = []
 
 # Train the DQN agent
-for episode in range(20): # No. of episodes
+for episode in range(1): # No. of episodes
     
     
     # Initial state - To be initialized
     state = interface.to_ints(config.layout.alphabetical)
+    print("STARTING A NEW EPISODE")
     print(state)
 
     keyboard = interface.KeyboardConfig(state, 
                                         config.coordinate_grid.standard, 
                                         config.hand_placement.home_row_us)
 
-    env = interface.Environment(keyboard_config = keyboard, max_iterations = 500, data=data)
+    env = interface.Environment(keyboard_config = keyboard, max_iterations = 30, data=data)
     done = False
     epoch = 1
     while not done:
+        print(f"------------EPOCH {epoch} -------------")
         action = agent.act(state)
-        next_state, reward, done, stats = env.step(action) 
-        agent.replay_buffer.add((state, action, reward, next_state, done))
+        next_state, reward, done, stats = env.step(action) #apply the action
+        collected_stats.append((stats, reward)) #record data for later
+
+        agent.replay_buffer.add((state, action, reward, next_state, done)) #remember this frame
         state = next_state
-        agent.train()
-        print("------------EPOCH - ",epoch,"------------")
+        agent.train() #train the model one step
+        print(f"REWARD: {reward}")
         
         epoch += 1
     agent.update_target_model()
+
+interface.save_data(collected_stats)
 ###########################################################################
 
 

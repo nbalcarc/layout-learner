@@ -2,6 +2,7 @@ from hands import Hands
 import numpy as np
 import numpy.typing as npt
 import config
+import pickle
 
 
 class KeyboardConfig:
@@ -89,8 +90,17 @@ def to_keys(layout: npt.NDArray) -> npt.NDArray:
     return np.array(list(map(lambda x: config.layout.alphabetical[x], layout)))
 
 
-def save_data(data: list[tuple[npt.NDArray, float, npt.NDArray, float, float]]):
-    pass
+def save_data(data: list[tuple[tuple[npt.NDArray, float, npt.NDArray, float], float]]):
+    #return new_state, reward, done, (events, avg_distance, time_gaps, use_deviation)
+    dicted = list(map(lambda x: {
+        "events": x[0][0],
+        "avg_distance": x[0][1],
+        "time_gaps": x[0][2],
+        "use_deviation": x[0][3],
+        "reward": x[1],
+    }, data))
+    with open("output.pkl", "wb") as file:
+        pickle.dump(dicted, file)
 
 
 class Environment:
