@@ -65,13 +65,17 @@ def main():
     )
 
     # iterate through all inputs
-    for pre_dir, post_dir in file_dirs:
-        with open(pre_dir, "r") as file: #read input
-            text = file.read()
-        validized = validize(text) #remove all invalid characters
-        chunked = chunkify(validized, 60) #turn into valid chunks
-        with open(post_dir, "w") as file: #output processed
-            file.write("\n".join(chunked))
+    compiled_file = "../data/processed/.compiled.txt"
+    open(compiled_file, "w").close() #reset this file
+    with open(compiled_file, "a") as bigfile:
+        for pre_dir, post_dir in file_dirs:
+            with open(pre_dir, "r") as file: #read input
+                text = file.read()
+            validized = validize(text) #remove all invalid characters
+            chunked = chunkify(validized, 60) #turn into valid chunks
+            with open(post_dir, "w") as file: #output processed
+                file.write("\n".join(chunked))
+                bigfile.write("\n".join(chunked))
 
 
 if __name__ == "__main__":

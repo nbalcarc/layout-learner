@@ -7,7 +7,7 @@ class Finger:
     """Handles finger location and timing."""
     def __init__(self, id: int):
         self.id = id
-        self.location: int = 0
+        self.location: int = -1
         self.last_used: int = -1
 
 
@@ -138,11 +138,13 @@ class Hands:
         Run a full dataset on the Hands. Returns statistics.
 
         Return: (all events, avg time gap per key, avg overall distance)
+
+        Note: second return value may have NaN's
         """
 
         events = np.zeros(9) #count of all events (7 from typing a key)
-        time_gap_totals = np.zeros(26) #total gaps
-        time_gap_counts = np.zeros(26) #numbers of occurences
+        time_gap_totals = np.zeros(30) #total gaps
+        time_gap_counts = np.zeros(30) #numbers of occurences
         distance_totals = 0.0 #total distance
         distance_counts = 0 #number of keys pressed
 
@@ -160,8 +162,8 @@ class Hands:
         '''
 
         for phrase in data:
+            self.reset()
             for c in phrase:
-                self.reset()
 
                 if c == "-": #spacer, there are no pluses
                     pass #TODO

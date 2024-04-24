@@ -22,7 +22,7 @@ def layout_swap(layout: npt.NDArray, action: int):
     layout[y] = c
 
 
-def analyze(keyboard_config: KeyboardConfig, dataset: list[str]) -> tuple[npt.NDArray, float]:
+def analyze(keyboard_config: KeyboardConfig, dataset: list[str]) -> tuple[npt.NDArray, npt.NDArray, float, float]:
     """
     Analyze a complete keyboard config without considering comfort.
 
@@ -68,6 +68,6 @@ def analyze(keyboard_config: KeyboardConfig, dataset: list[str]) -> tuple[npt.ND
         distance * distance_const #may be unnecessary because we already account for repeats and skipgrams
     )
 
-    return (events, points)
+    return (events, time_gaps, distance, points)
 
 
