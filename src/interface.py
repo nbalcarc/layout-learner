@@ -81,11 +81,11 @@ class Environment:
         self.iteration = 0
 
 
-    def step(self, action: int) -> tuple[npt.NDArray, float, bool]:
+    def step(self, action: int) -> tuple[npt.NDArray, float, bool, tuple[npt.NDArray, float, npt.NDArray, float]]:
         """
         Apply an action
 
-        Returns: (next state, reward, is done)
+        Returns: (next state, reward, is done, (events, avg finger distance, avg finger time gaps, finger use std))
         """
 
         done = self.iteration >= self.max_iterations #set a cap
@@ -97,6 +97,6 @@ class Environment:
 
         events, avg_distance, time_gaps, use_deviation, reward = analyze(self.keyboard_config, [""])
 
-        return new_state, reward, done
+        return new_state, reward, done, (events, avg_distance, time_gaps, use_deviation)
 
 
